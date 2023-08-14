@@ -2,10 +2,10 @@ const { request, response } = require("express");
 const db = require("../db/connection");
 const { allTopics } = require("../models/topics_model");
 
+
 const getTopics = (request, response, next) => {
-  allTopics(request.query)
+  allTopics(response)
     .then((topic) => {
-      console.log(topic);
       response.status(200).send(topic);
     })
     .catch((error) => {
