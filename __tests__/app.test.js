@@ -4,6 +4,7 @@ const data = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
 const request = require("supertest");
 const app = require("../app");
+const endpointFile = require("../endpoints.json");
 
 afterAll(() => {
   return db.end();
@@ -41,8 +42,8 @@ describe("GET api/", () => {
       .then((response) => {
         const endPoints = response.body.endPoints;
         const endpointKeys = Object.keys(endPoints);
-        console.log(endPoints);
 
+        expect(endPoints).toEqual(endpointFile);
         expect(endPoints).toBeInstanceOf(Object);
         expect(endpointKeys).toHaveLength(3);
       });
