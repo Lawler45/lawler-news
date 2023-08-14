@@ -1,3 +1,3 @@
 # Northcoders News API
 
-For instructions, please head over to [L2C NC News](https://l2c.northcoders.com/courses/be/nc-news).
+Welcome to my repo! To get started you will need to set up a development enviroment as well as a test enviroment. For instructions on how to do this please go check out https://www.freecodecamp.org/news/how-to-set-an-environment-variable-in-linux/.
