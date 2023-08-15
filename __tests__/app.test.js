@@ -99,6 +99,7 @@ describe("GET: /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
+        expect(body).toHaveLength(13);
         body.forEach((article) => {
           expect(article).toHaveProperty("author");
           expect(article).toHaveProperty("title");
