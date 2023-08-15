@@ -1,4 +1,3 @@
-const { allTopics } = require("../models/topics_model");
 const db = require("../db/connection");
 const data = require("../db/data/test-data/index");
 const seed = require("../db/seeds/seed");
@@ -49,3 +48,47 @@ describe("GET api/", () => {
       });
   });
 });
+describe("GET api/articles/:articleId", () => {
+  test("200: brings the artivle up with the relevant article id", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article.title).toEqual("Living in the shadow of a great man");
+      });
+  });
+  test("400: returns a 400 and bad request when passed the wrong data type", () => {
+    return request(app)
+      .get("/api/articles/lewis")
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toEqual("Bad Request");
+      });
+  });
+  test("404: returns a 404 and not found when there isnt an article id that matches", () => {
+    return request(app)
+      .get("/api/articles/2000")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toEqual("Not found");
+      });
+  });
+});
+
+describe("ALL: incorrect path", () => {
+  test("when entered a wrong path it should return a 404 error", () => {
+    return request(app)
+      .get("/api/bananas")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toEqual("Not Found");
+      });
+  });
+});
+
+//write more tests so you can see what were getting first
+//
