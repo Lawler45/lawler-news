@@ -48,6 +48,7 @@ describe("GET api/", () => {
       });
   });
 });
+
 describe("GET api/articles/:articleId", () => {
   test("200: brings the artivle up with the relevant article id", () => {
     return request(app)
@@ -56,6 +57,12 @@ describe("GET api/articles/:articleId", () => {
       .then(({ body }) => {
         const { article } = body;
         expect(article.title).toEqual("Living in the shadow of a great man");
+        expect(article.topic).toEqual("mitch");
+        expect(article.author).toEqual("butter_bridge");
+        expect(article.body).toEqual("I find this existence challenging");
+        expect(article).toHaveProperty("created_at");
+        expect(article.votes).toEqual(100);
+        expect(article).toHaveProperty("article_img_url");
       });
   });
   test("400: returns a 400 and bad request when passed the wrong data type", () => {
@@ -77,6 +84,17 @@ describe("GET api/articles/:articleId", () => {
       });
   });
 });
+
+// describe("GET: /api/articles", () => {
+//   test("200: respons with a 200 status and returns all the articles", () => {
+//     return request(app)
+//       .get("/api/articles")
+//       .expect(200)
+//       .then(({ body }) => {
+//         const { msg } = body;
+//       });
+//   });
+// });
 
 describe("ALL: incorrect path", () => {
   test("when entered a wrong path it should return a 404 error", () => {
