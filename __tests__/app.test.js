@@ -85,16 +85,33 @@ describe("GET api/articles/:articleId", () => {
   });
 });
 
-// describe("GET: /api/articles", () => {
-//   test("200: respons with a 200 status and returns all the articles", () => {
-//     return request(app)
-//       .get("/api/articles")
-//       .expect(200)
-//       .then(({ body }) => {
-//         const { msg } = body;
-//       });
-//   });
-// });
+describe("GET: /api/articles", () => {
+  test("200: responds with a 200 status and returns all the articles sorted by date in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("200: has a property of comment count that counts all the comments related to that article id", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        body.forEach((article) => {
+          expect(article).toHaveProperty("author");
+          expect(article).toHaveProperty("title");
+          expect(article).toHaveProperty("article_id");
+          expect(article).toHaveProperty("topic");
+          expect(article).toHaveProperty("created_at");
+          expect(article).toHaveProperty("votes");
+          expect(article).toHaveProperty("article_img_url");
+          expect(article).toHaveProperty("comment_count");
+        });
+      });
+  });
+});
 
 describe("ALL: incorrect path", () => {
   test("when entered a wrong path it should return a 404 error", () => {
