@@ -114,6 +114,52 @@ describe("GET: /api/articles", () => {
   });
 });
 
+describe("GET: /api/articles/:article_id/comments", () => {
+  test("200: responds with a 200 status and returns all the comments for the specified article_id and orders with by date, ,ost recent first", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body)
+        expect(body.comments).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("200: has a property of comment count that counts all the comments related to that article id", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toHaveLength(11);
+        body.comments.forEach((comment) => {
+          expect(comment).toHaveProperty("comment_id");
+          expect(comment).toHaveProperty("votes");
+          expect(comment).toHaveProperty("created_at");
+          expect(comment).toHaveProperty("author");
+          expect(comment).toHaveProperty("body");
+          expect(comment).toHaveProperty("article_id");
+        });
+      });
+  });
+  test("200: returns a 200 and message saying no comments when passed a valid article_id without any comments", () => {
+    return request(app)
+      .get("/api/articles/2/comments")
+      .expect(200)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toEqual("no comments");
+      });
+  });
+  test("404: returns a 404 and not found when there isnt an article id that matches", () => {
+    return request(app)
+      .get("/api/articles/2000/comments")
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toEqual("Not found");
+      });
+  });
+});
+
 describe("ALL: incorrect path", () => {
   test("when entered a wrong path it should return a 404 error", () => {
     return request(app)
@@ -125,6 +171,3 @@ describe("ALL: incorrect path", () => {
       });
   });
 });
-
-//write more tests so you can see what were getting first
-//

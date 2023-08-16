@@ -1,6 +1,10 @@
 const { request, response } = require("express");
 const db = require("../db/connection");
-const { articleId, allArticles } = require("../models/articles_model");
+const {
+  articleId,
+  allArticles,
+  allComments,
+} = require("../models/articles_model");
 
 const getArticleByID = (request, response, next) => {
   const id = request.params.article_id;
@@ -22,4 +26,22 @@ const getArticles = (request, response, next) => {
     });
 };
 
-module.exports = { getArticleByID, getArticles };
+const getComments = (request, response, next) => {
+  const id = request.params.article_id;
+  articleId(id)
+    .then(() => {
+      return allComments(id);
+    })
+    .then((comments) => {
+      if (!comments.length) {
+        response.status(200).send({ msg: "no comments" });
+      } else {
+        response.status(200).send({comments});
+      }
+    })
+    .catch((error) => {
+      next(error);
+    });
+};
+
+module.exports = { getArticleByID, getArticles, getComments };
