@@ -1,6 +1,11 @@
 const { request, response } = require("express");
 const db = require("../db/connection");
-const { articleId, allArticles, allComments } = require("../models/articles_model");
+const {
+  articleId,
+  allArticles,
+  allComments,
+} = require("../models/articles_model");
+const { checkExists } = require("../utils");
 
 const getArticleByID = (request, response, next) => {
   const id = request.params.article_id;
@@ -23,10 +28,16 @@ const getArticles = (request, response, next) => {
 };
 
 const getComments = (request, response, next) => {
-    const id = request.params.article_id;
+  const id = request.params.article_id;
   allComments(id)
+    .then((article) => {
+      if (!article.length) {
+        return response.status(404).send({ msg: "article does not exist" });
+      }
+      return allComments(id);
+    })
     .then((comments) => {
-      response.status(200).send({comments});
+      response.status(200).send({ comments });
     })
     .catch((error) => {
       next(error);

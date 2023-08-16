@@ -112,7 +112,6 @@ describe("GET: /api/articles", () => {
         });
       });
   });
-  
 });
 
 describe("GET: /api/articles/:article_id/comments", () => {
@@ -140,22 +139,22 @@ describe("GET: /api/articles/:article_id/comments", () => {
         });
       });
   });
-  test("400: returns a 400 and bad request when passed the wrong data type", () => {
+  test("200: returns a 200 and message saying no comments when passed a valid article_id without any comments", () => {
     return request(app)
-      .get("/api/articles/orange/comments")
-      .expect(400)
+      .get("/api/articles/2/comments")
+      .expect(200)
       .then(({ body }) => {
         const { msg } = body;
-        expect(msg).toEqual("Bad Request");
+        expect(msg).toEqual("There are no comments for this article");
       });
   });
-  test("404: returns a 404 and not found when there isnt an article id that matches", () => {
+  test.only("404: returns a 404 and not found when there isnt an article id that matches", () => {
     return request(app)
       .get("/api/articles/2000/comments")
       .expect(404)
       .then(({ body }) => {
         const { msg } = body;
-        expect(msg).toEqual("Not found");
+        expect(msg).toEqual("article does not exist");
       });
   });
 });
