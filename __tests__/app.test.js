@@ -120,6 +120,7 @@ describe("GET: /api/articles/:article_id/comments", () => {
       .get("/api/articles/1/comments")
       .expect(200)
       .then(({ body }) => {
+        console.log(body)
         expect(body.comments).toBeSortedBy("created_at", { descending: true });
       });
   });
@@ -145,16 +146,16 @@ describe("GET: /api/articles/:article_id/comments", () => {
       .expect(200)
       .then(({ body }) => {
         const { msg } = body;
-        expect(msg).toEqual("There are no comments for this article");
+        expect(msg).toEqual("no comments");
       });
   });
-  test.only("404: returns a 404 and not found when there isnt an article id that matches", () => {
+  test("404: returns a 404 and not found when there isnt an article id that matches", () => {
     return request(app)
       .get("/api/articles/2000/comments")
       .expect(404)
       .then(({ body }) => {
         const { msg } = body;
-        expect(msg).toEqual("article does not exist");
+        expect(msg).toEqual("Not found");
       });
   });
 });

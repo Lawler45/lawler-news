@@ -5,7 +5,6 @@ const {
   allArticles,
   allComments,
 } = require("../models/articles_model");
-const { checkExists } = require("../utils");
 
 const getArticleByID = (request, response, next) => {
   const id = request.params.article_id;
@@ -29,15 +28,16 @@ const getArticles = (request, response, next) => {
 
 const getComments = (request, response, next) => {
   const id = request.params.article_id;
-  allComments(id)
-    .then((article) => {
-      if (!article.length) {
-        return response.status(404).send({ msg: "article does not exist" });
-      }
+  articleId(id)
+    .then(() => {
       return allComments(id);
     })
     .then((comments) => {
-      response.status(200).send({ comments });
+      if (!comments.length) {
+        response.status(200).send({ msg: "no comments" });
+      } else {
+        response.status(200).send({comments});
+      }
     })
     .catch((error) => {
       next(error);
