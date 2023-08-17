@@ -1,5 +1,3 @@
-const { request, response } = require("express");
-const db = require("../db/connection");
 const {
   articleId,
   allArticles,
