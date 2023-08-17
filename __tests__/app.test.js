@@ -120,7 +120,6 @@ describe("GET: /api/articles/:article_id/comments", () => {
       .get("/api/articles/1/comments")
       .expect(200)
       .then(({ body }) => {
-        console.log(body)
         expect(body.comments).toBeSortedBy("created_at", { descending: true });
       });
   });
@@ -159,6 +158,91 @@ describe("GET: /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("POST: /api/articles/:article_id/comments", () => {
+  test("201: returns 201 status and the posted comment added to the comments table", () => {
+    const newComment = { username: "butter_bridge", body: "Great article" };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(201)
+      .then((response) => {
+        const { comment } = response.body;
+        expect(comment).toHaveProperty("comment_id", expect.any(Number));
+        expect(comment).toHaveProperty("body", "Great article");
+        expect(comment).toHaveProperty("votes", 0);
+        expect(comment).toHaveProperty("author", "butter_bridge");
+        expect(comment).toHaveProperty("article_id", 2);
+        expect(comment).toHaveProperty("created_at", expect.any(String));
+      });
+  });
+  test("201: returns 201 even if added another parameter", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "Great article",
+      fruit: "fruit",
+    };
+    return request(app)
+      .post("/api/articles/2/comments")
+      .send(newComment)
+      .expect(201)
+      .then((response) => {
+        const { comment } = response.body;
+        expect(comment).toHaveProperty("comment_id", expect.any(Number));
+        expect(comment).toHaveProperty("body", "Great article");
+        expect(comment).toHaveProperty("votes", 0);
+        expect(comment).toHaveProperty("author", "butter_bridge");
+        expect(comment).toHaveProperty("article_id", 2);
+        expect(comment).toHaveProperty("created_at", expect.any(String));
+      });
+  });
+  test("400: returns a 400 and bad request when passed a string for article id", () => {
+    const newComment = { username: "butter_bridge", body: "Great article" };
+    return request(app)
+      .post("/api/articles/orange/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toEqual("Bad Request");
+      });
+  });
+  test("400: returns a 400 and bad request when theres no body", () => {
+    const newComment = { username: "butter_bridge" };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toEqual("Bad Request");
+      });
+  });
+  test("404: returns a 404 and bad request when username doesnt exist", () => {
+    const newComment = { username: "lewis", body: 'Great article' };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toEqual("Username doesnt exist");
+      });
+  });
+  test("404: returns a 404 and bad request article id doesnt exist", () => {
+    const newComment = { username: "butter_bridge", body: 'Great article' };
+    return request(app)
+      .post("/api/articles/2000/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toEqual("Not found");
+      });
+  });
+});
+//username doesnt exist - 404
+//2 for pathway
 
 describe("ALL: incorrect path", () => {
   test("when entered a wrong path it should return a 404 error", () => {
