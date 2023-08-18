@@ -56,4 +56,5 @@ const insertPatchArticle = (article_id, inc_votes) => {
     });
 };
 
+
 module.exports = { articleId, allArticles, allComments, insertPatchArticle };

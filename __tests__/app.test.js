@@ -219,7 +219,7 @@ describe("POST: /api/articles/:article_id/comments", () => {
       });
   });
   test("404: returns a 404 and bad request when username doesnt exist", () => {
-    const newComment = { username: "lewis", body: 'Great article' };
+    const newComment = { username: "lewis", body: "Great article" };
     return request(app)
       .post("/api/articles/1/comments")
       .send(newComment)
@@ -230,7 +230,7 @@ describe("POST: /api/articles/:article_id/comments", () => {
       });
   });
   test("404: returns a 404 and bad request article id doesnt exist", () => {
-    const newComment = { username: "butter_bridge", body: 'Great article' };
+    const newComment = { username: "butter_bridge", body: "Great article" };
     return request(app)
       .post("/api/articles/2000/comments")
       .send(newComment)
@@ -242,53 +242,80 @@ describe("POST: /api/articles/:article_id/comments", () => {
   });
 });
 
-describe('PATCH: /api/articles/:article_id', ()=>{
-  test('200: should return with a 200 status and sucessfully update the votes on the selected article',()=>{
-    const inc_votes = {inc_votes: 1}
+describe("PATCH: /api/articles/:article_id", () => {
+  test("200: should return with a 200 status and sucessfully update the votes on the selected article", () => {
+    const inc_votes = { inc_votes: 1 };
     return request(app)
-    .patch('/api/articles/3')
-    .send(inc_votes)
-    .expect(200)
-    .then((response) =>{
-      const article = response.body
-      expect(article).toHaveProperty("votes", 1);
-      expect(article).toHaveProperty("title", expect.any(String));
-    })
-  })
-  test('400: should return 400 status code and bad request when inc_votes is a string', ()=>{
-    const inc_votes = {inc_votes: 'banana'}
+      .patch("/api/articles/3")
+      .send(inc_votes)
+      .expect(200)
+      .then((response) => {
+        const article = response.body;
+        expect(article).toHaveProperty("votes", 1);
+        expect(article).toHaveProperty("title", expect.any(String));
+      });
+  });
+  test("400: should return 400 status code and bad request when inc_votes is a string", () => {
+    const inc_votes = { inc_votes: "banana" };
     return request(app)
-    .patch('/api/articles/3')
-    .send(inc_votes)
-    .expect(400)
-    .then(({ body }) => {
-      const { msg } = body;
-      expect(msg).toEqual("Bad Request");
-  })
-})
-test('400: should return 400 status code and bad request when article_id is a string', ()=>{
-  const inc_votes = {inc_votes: 1}
-  return request(app)
-  .patch('/api/articles/banana')
-  .send(inc_votes)
-  .expect(400)
-  .then(({ body }) => {
-    const { msg } = body;
-    expect(msg).toEqual("Bad Request");
-})
-})
-test('404: should return 404 status code and not found when article_id doesnt exist', ()=>{
-  const inc_votes = {inc_votes: 1}
-  return request(app)
-  .patch('/api/articles/2000')
-  .send(inc_votes)
-  .expect(404)
-  .then(({ body }) => {
-    const { msg } = body;
-    expect(msg).toEqual("Not found");
-})
-})
-})
+      .patch("/api/articles/3")
+      .send(inc_votes)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toEqual("Bad Request");
+      });
+  });
+  test("400: should return 400 status code and bad request when article_id is a string", () => {
+    const inc_votes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/banana")
+      .send(inc_votes)
+      .expect(400)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toEqual("Bad Request");
+      });
+  });
+  test("404: should return 404 status code and not found when article_id doesnt exist", () => {
+    const inc_votes = { inc_votes: 1 };
+    return request(app)
+      .patch("/api/articles/2000")
+      .send(inc_votes)
+      .expect(404)
+      .then(({ body }) => {
+        const { msg } = body;
+        expect(msg).toEqual("Not found");
+      });
+  });
+});
+
+describe("DELETE: /api/comments/:comment_id", () => {
+  test("204: responds with a 204 status and no content", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(() => {
+        return request(app).get("/api/comments/1").expect(404);
+      });
+  });
+  test("404: responds with error when id doesnt exist", () => {
+    return request(app)
+      .delete("/api/comments/2000")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Comment doesnt exist");
+      });
+  });
+  test("400: responds with error when passed an invalid id", () => {
+    return request(app)
+      .delete("/api/comments/orange")
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe("Bad Request");
+      });
+  });
+});
 
 describe("ALL: incorrect path", () => {
   test("when entered a wrong path it should return a 404 error", () => {
