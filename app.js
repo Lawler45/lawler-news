@@ -5,6 +5,7 @@ const {
   getArticleByID,
   getArticles,
   getComments,
+  patchArticles,
 } = require("./controllers/articles_controller");
 const {
   handle400s,
@@ -29,6 +30,9 @@ app.get("/api/articles/:article_id/comments", getComments);
 
 app.post("/api/articles/:article_id/comments", postComment);
 
+app.patch("/api/articles/:article_id", patchArticles);
+
+
 app.use((request, response) => {
   response.status(404).json({ msg: "Not Found" });
 });
@@ -37,6 +41,7 @@ app.use(handle400s);
 app.use(handleCustomErrors);
 
 app.use((error, request, response, next) => {
+  console.log(error,'error500')
   response.status(500).send({ msg: "internal server error" });
 });
 module.exports = app;
