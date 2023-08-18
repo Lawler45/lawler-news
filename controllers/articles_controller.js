@@ -2,6 +2,7 @@ const {
   articleId,
   allArticles,
   allComments,
+  insertPatchArticle,
 } = require("../models/articles_model");
 
 const getArticleByID = (request, response, next) => {
@@ -26,20 +27,32 @@ const getArticles = (request, response, next) => {
 
 const getComments = (request, response, next) => {
   const id = request.params.article_id;
-  articleId(id)
-    .then(() => {
-      return allComments(id);
-    })
-    .then((comments) => {
-      if (!comments.length) {
-        response.status(200).send({ msg: "no comments" });
-      } else {
-        response.status(200).send({comments});
-      }
+  const promises = [articleId(id), allComments(id)];
+
+  Promise.all(promises)
+
+    .then((resolvedPromises) => {
+      response.status(200).send({ comments: resolvedPromises[1] });
     })
     .catch((error) => {
       next(error);
     });
 };
 
-module.exports = { getArticleByID, getArticles, getComments };
+const patchArticles = (request, response, next) => {
+  const { article_id } = request.params;
+  const { inc_votes } = request.body;
+
+  insertPatchArticle(article_id, inc_votes)
+    .then((article) => {
+      if (article === undefined) {
+        return Promise.reject({ status: 404, msg: "Not found" });
+      }
+      response.status(200).send(article);
+    })
+    .catch((error) => {
+      next(error);
+    });
+};
+
+module.exports = { getArticleByID, getArticles, getComments, patchArticles };

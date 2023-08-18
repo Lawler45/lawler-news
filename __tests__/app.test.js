@@ -115,7 +115,7 @@ describe("GET: /api/articles", () => {
 });
 
 describe("GET: /api/articles/:article_id/comments", () => {
-  test("200: responds with a 200 status and returns all the comments for the specified article_id and orders with by date, ,ost recent first", () => {
+  test("200: responds with a 200 status and returns all the comments for the specified article_id and orders with by date, ,most recent first", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
@@ -144,8 +144,8 @@ describe("GET: /api/articles/:article_id/comments", () => {
       .get("/api/articles/2/comments")
       .expect(200)
       .then(({ body }) => {
-        const { msg } = body;
-        expect(msg).toEqual("no comments");
+        const { comments } = body;
+        expect(comments).toEqual([]);
       });
   });
   test("404: returns a 404 and not found when there isnt an article id that matches", () => {
@@ -241,8 +241,54 @@ describe("POST: /api/articles/:article_id/comments", () => {
       });
   });
 });
-//username doesnt exist - 404
-//2 for pathway
+
+describe('PATCH: /api/articles/:article_id', ()=>{
+  test('200: should return with a 200 status and sucessfully update the votes on the selected article',()=>{
+    const inc_votes = {inc_votes: 1}
+    return request(app)
+    .patch('/api/articles/3')
+    .send(inc_votes)
+    .expect(200)
+    .then((response) =>{
+      const article = response.body
+      expect(article).toHaveProperty("votes", 1);
+      expect(article).toHaveProperty("title", expect.any(String));
+    })
+  })
+  test('400: should return 400 status code and bad request when inc_votes is a string', ()=>{
+    const inc_votes = {inc_votes: 'banana'}
+    return request(app)
+    .patch('/api/articles/3')
+    .send(inc_votes)
+    .expect(400)
+    .then(({ body }) => {
+      const { msg } = body;
+      expect(msg).toEqual("Bad Request");
+  })
+})
+test('400: should return 400 status code and bad request when article_id is a string', ()=>{
+  const inc_votes = {inc_votes: 1}
+  return request(app)
+  .patch('/api/articles/banana')
+  .send(inc_votes)
+  .expect(400)
+  .then(({ body }) => {
+    const { msg } = body;
+    expect(msg).toEqual("Bad Request");
+})
+})
+test('404: should return 404 status code and not found when article_id doesnt exist', ()=>{
+  const inc_votes = {inc_votes: 1}
+  return request(app)
+  .patch('/api/articles/2000')
+  .send(inc_votes)
+  .expect(404)
+  .then(({ body }) => {
+    const { msg } = body;
+    expect(msg).toEqual("Not found");
+})
+})
+})
 
 describe("ALL: incorrect path", () => {
   test("when entered a wrong path it should return a 404 error", () => {
