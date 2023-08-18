@@ -5,7 +5,7 @@ const {
   getArticleByID,
   getArticles,
   getComments,
-  patchArticles,
+  patchArticle,
 } = require("./controllers/articles_controller");
 const {
   handle400s,
@@ -30,7 +30,7 @@ app.get("/api/articles/:article_id/comments", getComments);
 
 app.post("/api/articles/:article_id/comments", postComment);
 
-app.patch("/api/articles/:article_id", patchArticles);
+app.patch("/api/articles/:article_id", patchArticle);
 
 app.delete('/api/comments/:comment_id', deleteComment)
 

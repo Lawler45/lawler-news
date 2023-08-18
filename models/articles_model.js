@@ -45,7 +45,7 @@ const allComments = (article_id) => {
     });
 };
 
-const insertPatchArticle = (article_id, inc_votes) => {
+const patchArticleVotes = (article_id, inc_votes) => {
   return db
     .query(
       `UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;`,
@@ -57,4 +57,4 @@ const insertPatchArticle = (article_id, inc_votes) => {
 };
 
 
-module.exports = { articleId, allArticles, allComments, insertPatchArticle };
+module.exports = { articleId, allArticles, allComments, patchArticleVotes  };
