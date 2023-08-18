@@ -45,6 +45,7 @@ const allComments = (article_id) => {
     });
 };
 
+
 const insertPatchArticle = (article_id, inc_votes) => {
   if (inc_votes === undefined) {
     return db
@@ -67,4 +68,5 @@ const insertPatchArticle = (article_id, inc_votes) => {
   }
 };
 
-module.exports = { articleId, allArticles, allComments, insertPatchArticle };
+
+module.exports = { articleId, allArticles, allComments, patchArticleVotes  };

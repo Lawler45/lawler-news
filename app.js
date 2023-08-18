@@ -5,14 +5,14 @@ const {
   getArticleByID,
   getArticles,
   getComments,
-  patchArticles,
+  patchArticle,
 } = require("./controllers/articles_controller");
 const {
   handle400s,
   handleCustomErrors,
 
 } = require("./controllers/error_controllers");
-const { postComment } = require("./controllers/comments_controller");
+const { postComment, deleteComment } = require("./controllers/comments_controller");
 
 const app = express();
 
@@ -30,7 +30,9 @@ app.get("/api/articles/:article_id/comments", getComments);
 
 app.post("/api/articles/:article_id/comments", postComment);
 
-app.patch("/api/articles/:article_id", patchArticles);
+app.patch("/api/articles/:article_id", patchArticle);
+
+app.delete('/api/comments/:comment_id', deleteComment)
 
 
 app.use((request, response) => {

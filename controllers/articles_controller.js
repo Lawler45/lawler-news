@@ -2,7 +2,7 @@ const {
   articleId,
   allArticles,
   allComments,
-  insertPatchArticle,
+  patchArticleVotes,
 } = require("../models/articles_model");
 
 const getArticleByID = (request, response, next) => {
@@ -39,11 +39,11 @@ const getComments = (request, response, next) => {
     });
 };
 
-const patchArticles = (request, response, next) => {
+const patchArticle = (request, response, next) => {
   const { article_id } = request.params;
   const { inc_votes } = request.body;
 
-  insertPatchArticle(article_id, inc_votes)
+  patchArticleVotes(article_id, inc_votes)
     .then((article) => {
       if (article === undefined) {
         return Promise.reject({ status: 404, msg: "Not found" });
@@ -55,4 +55,6 @@ const patchArticles = (request, response, next) => {
     });
 };
 
-module.exports = { getArticleByID, getArticles, getComments, patchArticles };
+
+
+module.exports = { getArticleByID, getArticles, getComments, patchArticle };
