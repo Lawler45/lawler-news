@@ -255,6 +255,17 @@ describe("PATCH: /api/articles/:article_id", () => {
         expect(article).toHaveProperty("title", expect.any(String));
       });
   });
+  test('200: should return with a 200 and return comment with no votes changed when not passed inc_votes',()=>{
+    return request(app)
+    .patch('/api/articles/3')
+    .send()
+    .expect(200)
+    .then((response) =>{
+      const article = response.body
+      expect(article).toHaveProperty("votes", 0);
+      expect(article).toHaveProperty("title", expect.any(String));
+    })
+  })
   test("400: should return 400 status code and bad request when inc_votes is a string", () => {
     const inc_votes = { inc_votes: "banana" };
     return request(app)
@@ -289,7 +300,7 @@ describe("PATCH: /api/articles/:article_id", () => {
       });
   });
 });
-
+})
 describe("DELETE: /api/comments/:comment_id", () => {
   test("204: responds with a 204 status and no content", () => {
     return request(app)
