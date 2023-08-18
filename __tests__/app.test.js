@@ -255,6 +255,17 @@ describe('PATCH: /api/articles/:article_id', ()=>{
       expect(article).toHaveProperty("title", expect.any(String));
     })
   })
+  test('200: should return with a 200 and return comment with no votes changed when not passed inc_votes',()=>{
+    return request(app)
+    .patch('/api/articles/3')
+    .send()
+    .expect(200)
+    .then((response) =>{
+      const article = response.body
+      expect(article).toHaveProperty("votes", 0);
+      expect(article).toHaveProperty("title", expect.any(String));
+    })
+  })
   test('400: should return 400 status code and bad request when inc_votes is a string', ()=>{
     const inc_votes = {inc_votes: 'banana'}
     return request(app)
@@ -277,7 +288,7 @@ test('400: should return 400 status code and bad request when article_id is a st
     expect(msg).toEqual("Bad Request");
 })
 })
-test('404: should return 404 status code and not found when article_id doesnt exist', ()=>{
+test('404: should return 404 status code and not found wwhen inc_votes is not a number / the wrong data type', ()=>{
   const inc_votes = {inc_votes: 1}
   return request(app)
   .patch('/api/articles/2000')
