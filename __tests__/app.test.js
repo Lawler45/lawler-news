@@ -300,7 +300,7 @@ describe("PATCH: /api/articles/:article_id", () => {
       });
   });
 });
-})
+
 describe("DELETE: /api/comments/:comment_id", () => {
   test("204: responds with a 204 status and no content", () => {
     return request(app)

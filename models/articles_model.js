@@ -46,7 +46,7 @@ const allComments = (article_id) => {
 };
 
 
-const insertPatchArticle = (article_id, inc_votes) => {
+const patchArticleVotes = (article_id, inc_votes) => {
   if (inc_votes === undefined) {
     return db
       .query(`SELECT * FROM articles WHERE article_id = $1;`, [article_id])
