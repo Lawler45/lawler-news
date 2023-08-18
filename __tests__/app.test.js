@@ -14,12 +14,10 @@ beforeEach(() => {
 });
 
 describe("GET api/topics", () => {
-  test("200: responds with a status 200", () => {
-    return request(app).get("/api/topics").expect(200);
-  });
-  test("200: returns an array of objects with slug and description properties", () => {
+  test("200: responds with 200 status and an array of objects with slug and description properties", () => {
     return request(app)
       .get("/api/topics")
+      .expect(200)
       .then((response) => {
         expect(response.body).toBeInstanceOf(Array);
         expect(response.body).toHaveLength(3);
@@ -255,17 +253,17 @@ describe("PATCH: /api/articles/:article_id", () => {
         expect(article).toHaveProperty("title", expect.any(String));
       });
   });
-  test('200: should return with a 200 and return comment with no votes changed when not passed inc_votes',()=>{
+  test("200: should return with a 200 and return comment with no votes changed when not passed inc_votes", () => {
     return request(app)
-    .patch('/api/articles/3')
-    .send()
-    .expect(200)
-    .then((response) =>{
-      const article = response.body
-      expect(article).toHaveProperty("votes", 0);
-      expect(article).toHaveProperty("title", expect.any(String));
-    })
-  })
+      .patch("/api/articles/3")
+      .send()
+      .expect(200)
+      .then((response) => {
+        const article = response.body;
+        expect(article).toHaveProperty("votes", 0);
+        expect(article).toHaveProperty("title", expect.any(String));
+      });
+  });
   test("400: should return 400 status code and bad request when inc_votes is a string", () => {
     const inc_votes = { inc_votes: "banana" };
     return request(app)
@@ -324,6 +322,23 @@ describe("DELETE: /api/comments/:comment_id", () => {
       .expect(400)
       .then((response) => {
         expect(response.body.msg).toBe("Bad Request");
+      });
+  });
+});
+
+describe.only("GET: api/users", () => {
+  test("200: responds with 200 status and all users", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then((response) => {
+        expect(response.body).toBeInstanceOf(Array);
+        expect(response.body).toHaveLength(4);
+        response.body.forEach((topic) => {
+          expect(topic).toHaveProperty("username", expect.any(String));
+          expect(topic).toHaveProperty("name", expect.any(String));
+          expect(topic).toHaveProperty("avatar_url", expect.any(String));
+        });
       });
   });
 });
