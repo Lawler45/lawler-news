@@ -5,6 +5,9 @@ const {
   patchArticleVotes,
 } = require("../models/articles_model");
 
+const {checkTopicExists} = require('../models/topics_model')
+
+
 const getArticleByID = (request, response, next) => {
   const id = request.params.article_id;
   articleId(id)
@@ -16,13 +19,19 @@ const getArticleByID = (request, response, next) => {
     });
 };
 const getArticles = (request, response, next) => {
-  allArticles(response)
-    .then((article) => {
-      response.status(200).send(article);
+  const { topic, sort_by, order } = request.query;
+
+  allArticles(topic, sort_by, order)
+    .then((articles) => {
+      if (topic) {
+        return checkTopicExists(topic).then(() => articles);
+      }
+      return articles;
     })
-    .catch((error) => {
-      next(error);
-    });
+    .then((articles) => {
+      response.status(200).send({ articles });
+    })
+    .catch(next);
 };
 
 const getComments = (request, response, next) => {

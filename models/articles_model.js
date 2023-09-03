@@ -12,24 +12,47 @@ const articleId = (article_id) => {
     });
 };
 
-const allArticles = () => {
-  return db
-    .query(
-      `SELECT articles.author, 
-      articles.title, 
-      articles.article_id, 
-      articles.topic, 
-      articles.created_at, 
-      articles.votes, 
-      articles.article_img_url, 
-      COUNT(comments.comment_id) AS comment_count FROM articles
-    LEFT JOIN comments ON articles.article_id = comments.article_id
-    GROUP BY articles.article_id
-     ORDER BY created_at DESC;`
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+const allArticles = (topic, sort_by = "created_at", order = "desc") => {
+
+  const tableHeaders = [
+    "article_id",
+    "author",
+    "created_at",
+    "votes",
+    "article_img_url",
+  ];
+
+  if (!tableHeaders.includes(sort_by)) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+
+  if (order !== "desc" && order !== "asc") {
+    console.log("inside order by");
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+
+  const queryValues = [];
+
+  let baseSqlStringOne = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id)::integer AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id `;
+
+  if (topic) {
+    baseSqlStringOne += `WHERE articles.topic = $1 `;
+    queryValues.push(topic);
+  }
+
+  baseSqlStringOne += `GROUP BY articles.article_id `;
+
+  if (sort_by) {
+    baseSqlStringOne += `ORDER BY articles.${sort_by} `;
+  }
+
+  if (order) {
+    baseSqlStringOne += `${order}`;
+  }
+
+  return db.query(baseSqlStringOne, queryValues).then((result) => {
+    return result.rows;
+  });
 };
 
 const allComments = (article_id) => {
@@ -44,7 +67,6 @@ const allComments = (article_id) => {
       return rows;
     });
 };
-
 
 const patchArticleVotes = (article_id, inc_votes) => {
   if (inc_votes === undefined) {
@@ -68,5 +90,4 @@ const patchArticleVotes = (article_id, inc_votes) => {
   }
 };
 
-
-module.exports = { articleId, allArticles, allComments, patchArticleVotes  };
+module.exports = { articleId, allArticles, allComments, patchArticleVotes };
