@@ -89,7 +89,7 @@ describe("GET: /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        expect(body).toBeSortedBy("created_at", { descending: true });
+        expect(body.articles).toBeSortedBy("created_at", { descending: true });
       });
   });
   test("200: has a property of comment count that counts all the comments related to that article id", () => {
@@ -97,8 +97,8 @@ describe("GET: /api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        expect(body).toHaveLength(13);
-        body.forEach((article) => {
+        expect(body.articles).toHaveLength(13);
+        body.articles.forEach((article) => {
           expect(article).toHaveProperty("author");
           expect(article).toHaveProperty("title");
           expect(article).toHaveProperty("article_id");
@@ -339,6 +339,18 @@ describe("GET: api/users", () => {
           expect(topic).toHaveProperty("name", expect.any(String));
           expect(topic).toHaveProperty("avatar_url", expect.any(String));
         });
+      });
+  });
+});
+
+describe("GET: api/articles(queries)", () => {
+  test("200: responds with 200 status and filters articles by topic, sorts them by any column with a selected order", () => {
+    return request(app)
+      .get("/api/articles?topic=cats&sort_by=author&order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(1);
+        expect(body.articles[0].topic).toEqual("cats");
       });
   });
 });
