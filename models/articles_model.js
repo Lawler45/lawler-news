@@ -13,7 +13,6 @@ const articleId = (article_id) => {
 };
 
 const allArticles = (topic, sort_by = "created_at", order = "desc") => {
-
   const tableHeaders = [
     "article_id",
     "author",
@@ -33,24 +32,24 @@ const allArticles = (topic, sort_by = "created_at", order = "desc") => {
 
   const queryValues = [];
 
-  let baseSqlStringOne = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id)::integer AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id `;
+  let baseSqlString = `SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT(comments.comment_id)::integer AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id `;
 
   if (topic) {
-    baseSqlStringOne += `WHERE articles.topic = $1 `;
+    baseSqlString += `WHERE articles.topic = $1 `;
     queryValues.push(topic);
   }
 
-  baseSqlStringOne += `GROUP BY articles.article_id `;
+  baseSqlString += `GROUP BY articles.article_id `;
 
   if (sort_by) {
-    baseSqlStringOne += `ORDER BY articles.${sort_by} `;
+    baseSqlString += `ORDER BY articles.${sort_by} `;
   }
 
   if (order) {
-    baseSqlStringOne += `${order}`;
+    baseSqlString += `${order}`;
   }
 
-  return db.query(baseSqlStringOne, queryValues).then((result) => {
+  return db.query(baseSqlString, queryValues).then((result) => {
     return result.rows;
   });
 };
