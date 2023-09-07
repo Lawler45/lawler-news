@@ -48,7 +48,7 @@ describe("GET api/", () => {
 });
 
 describe("GET api/articles/:articleId", () => {
-  test("200: brings the artivle up with the relevant article id", () => {
+  test("200: brings the article up with the relevant article id", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)

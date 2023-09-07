@@ -19,6 +19,7 @@ const allArticles = (topic, sort_by = "created_at", order = "desc") => {
     "created_at",
     "votes",
     "article_img_url",
+    "comment_count"
   ];
 
   if (!tableHeaders.includes(sort_by)) {
