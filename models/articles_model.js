@@ -41,7 +41,6 @@ const allArticles = (topic, sort_by = "created_at", order = "desc") => {
   }
 
   baseSqlString += `GROUP BY articles.article_id `;
-
   if (sort_by) {
     baseSqlString += `ORDER BY articles.${sort_by} `;
   }
