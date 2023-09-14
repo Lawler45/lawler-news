@@ -20,10 +20,12 @@ Whilst developing this app I used real-world development practices such as AGILE
 
 ## Instructions
 
+If you want to test and develop my project please follow the instructions below.
+
 ### 1. First clone the repo in your terminal
 
 ```
-git clone https://github.com/Lawler45/lawler-news-back-end.git
+git clone https://github.com/Lawler45/lawler-news-front-end.git
 ```
 
 ### 2. Ensure that you install the required dependencies
@@ -34,32 +36,9 @@ npm i
 
 ### 3. Create .env files in root directory
 
-.env.test
-
 ```sql
-PGDATABASE=nc_news_test
+npm run dev
 ```
-
-.env.development
-
-```sql
-PGDATABASE=nc_news
-```
-
-### 4. Setup and seed the local database if you want to send local requests
-
-```
-npm run setup-dbs
-
-npm run seed
-```
-
-### 5. Test database using jest.
-
-```
-npm t
-```
-
 ## Version requirements
 
 Node v20.3.1
